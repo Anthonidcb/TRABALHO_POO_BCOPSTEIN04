@@ -1,10 +1,14 @@
 package com.anthoni;
 
-public class ContaCorrente {
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+
+public class ContaCorrente{
     private int numero;
     private String correntista;
     private double saldo;
     private boolean ativa;
+    private ArrayList<EntradaExtrato> extrato;
 
     public ContaCorrente(int numero, String correntista) {
         if (numero < 0) {
@@ -17,6 +21,7 @@ public class ContaCorrente {
         this.correntista = correntista;
         this.saldo = 0.0;
         this.ativa = true;
+        extrato = new ArrayList<>();
     }
 
     public int getNumero() {
@@ -31,6 +36,10 @@ public class ContaCorrente {
         return saldo;
     }
 
+    public ArrayList<EntradaExtrato> getExtrato(){
+        return extrato;
+    }
+    
     public boolean isAtiva() {
         return ativa;
     }
@@ -43,6 +52,7 @@ public class ContaCorrente {
             throw new IllegalArgumentException("Valor do depósito deve ser positivo.");
         }
         saldo += valor;
+        extrato.add(new EntradaExtrato(LocalDateTime.now(), TipoOperacao.DEPOSITO, valor));
     }
 
     public void saca(double valor) {
@@ -56,6 +66,7 @@ public class ContaCorrente {
             throw new IllegalArgumentException("Saldo insuficiente.");
         }
         saldo -= valor;
+        extrato.add(new EntradaExtrato(LocalDateTime.now(), TipoOperacao.RETIRADA, valor));
     }
 
     public void transfere(double valor, ContaCorrente contaDestino) {
@@ -69,6 +80,7 @@ public class ContaCorrente {
             throw new IllegalArgumentException("Saldo insuficiente.");
         }
         saldo -= valor;
+        extrato.add(new EntradaExtrato(LocalDateTime.now(), TipoOperacao.RETIRADA, valor));
         contaDestino.deposita(valor);
     }
 
